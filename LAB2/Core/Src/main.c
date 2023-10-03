@@ -170,6 +170,7 @@ void display7SEG(int counter){
 
 	}
 }
+int hour=15, min=8,second=50;
 const int MAX_LED=4;
 int index_led=0;
 int led_buffer[4]={1,5,0,8};
@@ -180,21 +181,18 @@ void update7SEG(int index){
 		 HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, SET);
 		 HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, SET);
 		display7SEG(led_buffer[index]);
-
 		break;
 	case 1:
-		 HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, SET);
 		 HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, SET);
 		 HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, SET);
+		 HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, SET);
 		display7SEG(led_buffer[index]);
-
 		break;
 	case 2:
 		 HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, SET);
 		 HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, SET);
 		 HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, SET);
 		display7SEG(led_buffer[index]);
-
 		break;
 	case 3:
 		 HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, SET);
@@ -207,6 +205,18 @@ void update7SEG(int index){
 		break;
 	}
 
+
+}
+void updateClockBuffer(){
+	int remainder=hour%10;
+
+		led_buffer[0]=hour/10;
+		led_buffer[1]=remainder;
+
+	remainder=min%10;
+
+		led_buffer[2]=min/10;
+		led_buffer[3]=remainder;
 
 }
 int main(void)
@@ -240,18 +250,36 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  setTimer1(25);
+  setTimer1(50);
   setTimer2(100);
+  setTimer3(10);
   int counter=0;
 
   while (1)
   {
-
+	 if(timer3_flag==1){
+		 if(second>=60){
+			 second=0;
+			 min++;
+		 }
+		 if(min>=60){
+			 min=0;
+			 hour++;
+		 }
+		 if(hour>=24){
+			 hour=0;
+		 }
+		 second++;
+		 updateClockBuffer();
+		 setTimer3(10);
+	 }
 
 	 if(timer1_flag==1){
 		 if(counter==0){
 			 update7SEG(index_led++);
 			 HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, RESET);
+
+
 			 counter=1;
 
 		 }else if(counter==1)
@@ -273,6 +301,7 @@ int main(void)
 			 counter=3;
 		 }else if(counter==3){
 			 update7SEG(index_led++);
+
 			 HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, RESET);
 
 			 counter=0;
@@ -282,7 +311,7 @@ int main(void)
 			 index_led=0;
 		 }
 
-		 setTimer1(25);
+		 setTimer1(50);
 	 }
 
 	 if(timer2_flag==1){

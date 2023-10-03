@@ -19,7 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "software_timer.h"
+#include"software_timer.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -46,8 +46,35 @@ TIM_HandleTypeDef htim2;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
+
+/* Private function prototypes -----------------------------------------------*/
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+static void MX_TIM2_Init(void);
+/* USER CODE BEGIN PFP */
+
+/* USER CODE END PFP */
+
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
+
+/* USER CODE END 0 */
+
+/**
+  * @brief  The application entry point.
+  * @retval int
+  */
 void display7SEG(int counter){
 	switch(counter){
+	case 0:
+		  HAL_GPIO_WritePin(SEG0_GPIO_Port, SEG0_Pin, RESET);
+		  HAL_GPIO_WritePin(SEG1_GPIO_Port, SEG1_Pin, RESET);
+		  HAL_GPIO_WritePin(SEG2_GPIO_Port, SEG2_Pin, RESET);
+		  HAL_GPIO_WritePin(SEG3_GPIO_Port, SEG3_Pin, RESET);
+		  HAL_GPIO_WritePin(SEG4_GPIO_Port, SEG4_Pin, RESET);
+		  HAL_GPIO_WritePin(SEG5_GPIO_Port, SEG5_Pin, RESET);
+		  HAL_GPIO_WritePin(SEG6_GPIO_Port, SEG6_Pin, SET);
+		  break;
 	case 1:
 
 
@@ -71,25 +98,20 @@ void display7SEG(int counter){
 		  HAL_GPIO_WritePin(SEG6_GPIO_Port, SEG6_Pin, RESET);
 
 		  break;
+	case 3:
+		  HAL_GPIO_WritePin(SEG0_GPIO_Port, SEG0_Pin, RESET);
+		  HAL_GPIO_WritePin(SEG1_GPIO_Port, SEG1_Pin, RESET);
+		  HAL_GPIO_WritePin(SEG2_GPIO_Port, SEG2_Pin, RESET);
+		  HAL_GPIO_WritePin(SEG3_GPIO_Port, SEG3_Pin, RESET);
+		  HAL_GPIO_WritePin(SEG4_GPIO_Port, SEG4_Pin, SET);
+		  HAL_GPIO_WritePin(SEG5_GPIO_Port, SEG5_Pin, SET);
+		  HAL_GPIO_WritePin(SEG6_GPIO_Port, SEG6_Pin, RESET);
+		  break;
+
+
+
 	}
 }
-/* Private function prototypes -----------------------------------------------*/
-void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
-static void MX_TIM2_Init(void);
-/* USER CODE BEGIN PFP */
-
-/* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -122,27 +144,56 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   setTimer1(50);
+  setTimer2(100);
   int counter=0;
   while (1)
   {
-	  if(timer1_flag==1){
-		  if(counter==0)
-		  {
-		      HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, RESET);
-		      HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, SET);
+	 if(timer1_flag==1){
+		 if(counter==0){
+			 display7SEG(0);
+			 HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, RESET);
+			 HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, SET);
+			 HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, SET);
+			 HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, SET);
 
-			  display7SEG(1);
-			  counter=1;
+			 counter=1;
 
-		  }else if(counter==1){
-		      HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, SET);
-		      HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, RESET);
-			  display7SEG(2);
-			  counter=0;
+		 }else if(counter==1)
+		 {
+			 display7SEG(0);
+			 HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, SET);
+			 HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, RESET);
+			 HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, SET);
+			 HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, SET);
 
-		  }
-		  setTimer1(50);
-	  }
+			 counter=2;
+
+		 }else if(counter==2)
+		 {
+			 display7SEG(3);
+			 HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, SET);
+			 HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, SET);
+			 HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, RESET);
+			 HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, SET);
+
+			 counter=3;
+		 }else if(counter==3){
+			 display7SEG(0);
+			 HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, SET);
+			 HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, SET);
+			 HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, SET);
+			 HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, RESET);
+
+			 counter=0;
+		 }
+		 setTimer1(50);
+	 }
+
+	 if(timer2_flag==1){
+		 HAL_GPIO_TogglePin(DOT_GPIO_Port, DOT_Pin);
+		 setTimer2(100);
+
+	 }
 
     /* USER CODE END WHILE */
 
@@ -245,14 +296,17 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LED_RED_Pin|EN0_Pin|EN1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, DOT_Pin|LED_RED_Pin|EN0_Pin|EN1_Pin
+                          |EN2_Pin|EN3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, SEG0_Pin|SEG1_Pin|SEG2_Pin|SEG3_Pin
                           |SEG4_Pin|SEG5_Pin|SEG6_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : LED_RED_Pin EN0_Pin EN1_Pin */
-  GPIO_InitStruct.Pin = LED_RED_Pin|EN0_Pin|EN1_Pin;
+  /*Configure GPIO pins : DOT_Pin LED_RED_Pin EN0_Pin EN1_Pin
+                           EN2_Pin EN3_Pin */
+  GPIO_InitStruct.Pin = DOT_Pin|LED_RED_Pin|EN0_Pin|EN1_Pin
+                          |EN2_Pin|EN3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

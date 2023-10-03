@@ -240,7 +240,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  setTimer1(50);
+  setTimer1(25);
   setTimer2(100);
   int counter=0;
 
@@ -282,7 +282,7 @@ int main(void)
 			 index_led=0;
 		 }
 
-		 setTimer1(50);
+		 setTimer1(25);
 	 }
 
 	 if(timer2_flag==1){

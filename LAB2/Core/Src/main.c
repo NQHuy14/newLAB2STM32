@@ -425,15 +425,13 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
   /*
-  * timer0_flag and setTimer0 is using to set timer for LED RED, switch every second
-  * timer1_flag and setTimer1 is using to set timer for LED 7SEG, switch every 250ms
-  * timer2_flag and setTimer2 is using to set timer for the colon, display every 500ms
+
   */
 
-  //setTimer for first time timer_flag change to 1
-  setTimer0(10); //timer for LED-RED, turn on every second
-  setTimer1(10); //timer for 4 LED 7SEG, switch every 250ms
-  setTimer2(20); //timer for colon, display every 500ms
+
+  setTimer0(10);
+  setTimer1(10);
+  setTimer2(20);
   setTimer3(1);
   setTimer4(1);
 
@@ -505,10 +503,10 @@ int main(void)
 		  setTimer3(1);
 	  }
 
-//	  if ( timer4_flag == 1) {
-//		  rotate_left(matrix_buffer,8);
-//		  setTimer4(1);
-//	  }
+	  if ( timer4_flag == 1) {
+		  rotate_left(matrix_buffer,8);
+		  setTimer4(1);
+	  }
 
     /* USER CODE BEGIN 3 */
   }
